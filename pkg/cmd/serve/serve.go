@@ -89,17 +89,6 @@ func startOperator(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	//// Create Service object to expose the metrics port.
-	//servicePorts := []v1.ServicePort{
-	//	{Port: metricsPort,
-	//		Name:       metrics.OperatorPortName,
-	//		Protocol:   v1.ProtocolTCP,
-	//		TargetPort: intstr.IntOrString{Type: intstr.Int, IntVal: metricsPort}},
-	//}
-	//if _, err = metrics.CreateMetricsService(ctx, cfg, servicePorts); err != nil {
-	//	logger().Info(err.Error())
-	//}
-
 	logger().Info("Starting the operator.")
 	version.LogVersion()
 
@@ -112,7 +101,7 @@ func startOperator(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-// ggetWatchNamespace returns the namespace the operator should be watching for changes
+// getWatchNamespace returns the namespace the operator should be watching for changes.
 func getWatchNamespace() (string, error) {
 	ns, found := os.LookupEnv(WatchNamespaceEnvVar)
 	if !found {
@@ -120,4 +109,3 @@ func getWatchNamespace() (string, error) {
 	}
 	return ns, nil
 }
-
