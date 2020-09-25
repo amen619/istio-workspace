@@ -5,12 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	v1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
-
 	"github.com/go-logr/logr"
 	"github.com/operator-framework/operator-lib/leader"
-	"github.com/operator-framework/operator-sdk/pkg/metrics"
 
 	"github.com/maistra/istio-workspace/pkg/apis"
 	"github.com/maistra/istio-workspace/pkg/cmd/version"
@@ -93,16 +89,16 @@ func startOperator(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// Create Service object to expose the metrics port.
-	servicePorts := []v1.ServicePort{
-		{Port: metricsPort,
-			Name:       metrics.OperatorPortName,
-			Protocol:   v1.ProtocolTCP,
-			TargetPort: intstr.IntOrString{Type: intstr.Int, IntVal: metricsPort}},
-	}
-	if _, err = metrics.CreateMetricsService(ctx, cfg, servicePorts); err != nil {
-		logger().Info(err.Error())
-	}
+	//// Create Service object to expose the metrics port.
+	//servicePorts := []v1.ServicePort{
+	//	{Port: metricsPort,
+	//		Name:       metrics.OperatorPortName,
+	//		Protocol:   v1.ProtocolTCP,
+	//		TargetPort: intstr.IntOrString{Type: intstr.Int, IntVal: metricsPort}},
+	//}
+	//if _, err = metrics.CreateMetricsService(ctx, cfg, servicePorts); err != nil {
+	//	logger().Info(err.Error())
+	//}
 
 	logger().Info("Starting the operator.")
 	version.LogVersion()
