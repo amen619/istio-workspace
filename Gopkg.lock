@@ -973,7 +973,6 @@
   digest = "1:e6dbaffcc5407ea1fa7633f6ccb7e53ff3952eed041e9cbe4f97c9af87913ef1"
   name = "k8s.io/api"
   packages = [
-    "admission/v1",
     "admission/v1beta1",
     "admissionregistration/v1",
     "admissionregistration/v1beta1",
@@ -1339,7 +1338,6 @@
     "gopkg.in/yaml.v2",
     "istio.io/api/networking/v1alpha3",
     "istio.io/client-go/pkg/apis/networking/v1alpha3",
-    "k8s.io/api/admission/v1",
     "k8s.io/api/apps/v1",
     "k8s.io/api/core/v1",
     "k8s.io/api/rbac/v1",
@@ -1386,6 +1384,8 @@
     "sigs.k8s.io/controller-runtime/pkg/reconcile",
     "sigs.k8s.io/controller-runtime/pkg/scheme",
     "sigs.k8s.io/controller-runtime/pkg/source",
+    "sigs.k8s.io/controller-runtime/pkg/webhook",
+    "sigs.k8s.io/controller-runtime/pkg/webhook/admission",
     "sigs.k8s.io/yaml",
   ]
   solver-name = "gps-cdcl"
