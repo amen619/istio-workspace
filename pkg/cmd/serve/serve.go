@@ -19,6 +19,7 @@ import (
 	"github.com/maistra/istio-workspace/pkg/log"
 
 	"github.com/spf13/cobra"
+	admissionv1beta1 "k8s.io/api/admission/v1beta1"
 	k8sConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
@@ -30,6 +31,8 @@ var logger = func() logr.Logger {
 }
 
 var (
+	webhookHost       = "0.0.0.0"
+	webhookPort       = 8443
 	metricsHost       = "0.0.0.0"
 	metricsPort int32 = 8383
 )
@@ -70,7 +73,10 @@ func startOperator(cmd *cobra.Command, args []string) error {
 	// Create a new Cmd to provide shared dependencies and Start components
 	mgr, err := manager.New(cfg, manager.Options{
 		Namespace:          namespace,
+		Port:               webhookPort,
+		Host:               webhookHost,
 		MetricsBindAddress: fmt.Sprintf("%s:%d", metricsHost, metricsPort),
+		CertDir:            "/tmp/certs/",
 	})
 	if err != nil {
 		logger().Error(err, "")
@@ -85,6 +91,11 @@ func startOperator(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
+	if err = admissionv1beta1.AddToScheme(mgr.GetScheme()); err != nil {
+		logger().Error(err, "")
+		return nil
+	}
+
 	// Setup all Controllers
 	if err = controller.AddToManager(mgr); err != nil {
 		logger().Error(err, "")
@@ -95,7 +106,7 @@ func startOperator(cmd *cobra.Command, args []string) error {
 	hookServer := mgr.GetWebhookServer()
 
 	logger().Info("Registering webhooks to the webhook server.")
-	hookServer.Register("/deployment-mutation", &webhook.Admission{Handler: mutation.Webhook{Client: mgr.GetClient()}})
+	hookServer.Register("/deployment-mutation", &webhook.Admission{Handler: &mutation.Webhook{Client: mgr.GetClient()}})
 
 	// Create Service object to expose the metrics port.
 	servicePorts := []v1.ServicePort{
